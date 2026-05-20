@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import DeleteQuestConfirmation from "./DeleteQuestConfirmation";
 
 const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
   const [editingId, setEditingId] = useState(null);
@@ -21,7 +22,7 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
     return (
       <div className="text-center py-12 text-muted-foreground">
         <p className="text-lg font-medium">No quests yet 🗡️</p>
-        <p className="text-sm mt-1">Add your first quest to begin the adventure</p>
+        <p className="text-sm mt-1">Add your first quest to start your journey</p>
       </div>
     );
   }
@@ -87,17 +88,10 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
                 <path d="m15 5 4 4" />
               </svg>
             </button>
-            <button
-              onClick={() => onDelete(quest.id)}
-              className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
-              aria-label="Abandon quest"
-            >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 6h18" />
-                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-              </svg>
-            </button>
+            <DeleteQuestConfirmation 
+              onDelete={onDelete}
+              questId={quest.id}
+            />
           </li>
         );
       })}

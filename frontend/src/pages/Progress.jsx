@@ -20,7 +20,7 @@ const Progress = () => {
               <path d="m12 19-7-7 7-7" /><path d="M19 12H5" />
             </svg>
           </Link>
-          <h1 className="text-2xl font-bold flex-1">Quest Log 📜</h1>
+          <h1 className="text-2xl font-bold flex-1">Progress Log 📜</h1>
           <button
             onClick={() => setShowConfirm(true)}
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
@@ -64,11 +64,12 @@ const Progress = () => {
                   d.isToday ? "border-primary bg-primary/5" : "border-border bg-card"
                 }`}
               >
-                <p className="text-xs text-muted-foreground">{d.day}</p>
-                <p className="text-lg font-bold font-mono mt-1">
+                <p className="text-sm text-muted-foreground">{d.day}</p>
+                <p className="text-lg font-bold font-mono">
+                  <span className="ml-2"></span>
                   {d.total > 0 ? Math.round((d.completed / d.total) * 100) : 0}
+                  <span className="text-sm ml-1 text-muted-foreground">%</span>
                 </p>
-                <p className="text-[10px] text-muted-foreground">XP</p>
               </div>
             ))}
           </div>

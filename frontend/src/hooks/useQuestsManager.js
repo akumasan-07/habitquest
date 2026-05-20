@@ -21,12 +21,20 @@ export const useQuestsManager = () => {
   useEffect(() => localStorage.setItem(LOGS_KEY, JSON.stringify(logs)), [logs]);
 
   const addQuest = useCallback((title) => {
+    const exists = quests.some(
+      (q) => q.title.toLowerCase() === title.toLowerCase()
+    );
+    if (exists) {
+      return false;
+    }
+    
     const quest = {
       id: generateId(),
       title,
       createdAt: todayStr(),
     };
     setQuests((prev) => [...prev, quest]);
+    return true;
   }, []);
 
   const deleteQuest = useCallback((id) => {
