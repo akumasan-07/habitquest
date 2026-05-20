@@ -1,6 +1,6 @@
-import { getProductivityScore } from "@/lib/questUtils";
+import { getProductivityScore } from "@/lib/questAnalytics";
 
-const ProductivityScore = ({ completed, total }) => {
+const DayProgress = ({ completed, total }) => {
   const score = getProductivityScore(completed, total);
   const circumference = 2 * Math.PI * 40;
   const offset = circumference - (score / 100) * circumference;
@@ -38,4 +38,4 @@ const ProductivityScore = ({ completed, total }) => {
   );
 };
 
-export default ProductivityScore;
+export default DayProgress;

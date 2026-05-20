@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useQuestsManager } from "@/hooks/useQuestsManager";
-import { getStreaks, getCompletionRate, getWeeklySummary, getHeatmapData } from "@/lib/questUtils";
+import { getStreaks, getCompletionRate, getWeeklySummary, getHeatmapData } from "@/lib/questAnalytics";
 import QuestHeatmap from "@/components/QuestHeatmap";
 import { Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
-const Analytics = () => {
+const Progress = () => {
   const { quests, logs, resetAll } = useQuestsManager();
   const [showConfirm, setShowConfirm] = useState(false);
   const weekly = getWeeklySummary(logs, quests);
@@ -22,13 +23,14 @@ const Analytics = () => {
           <h1 className="text-2xl font-bold flex-1">Quest Log 📜</h1>
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
           >
             <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" />
             </svg>
             Reset
           </button>
+          <ThemeToggle />
         </div>
 
         {showConfirm && (
@@ -118,4 +120,4 @@ const Analytics = () => {
   );
 };
 
-export default Analytics;
+export default Progress;

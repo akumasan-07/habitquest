@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { todayStr, generateId } from "@/lib/questUtils";
+import { todayStr, generateId } from "@/lib/questAnalytics";
 
 const QUESTS_KEY = "pt_quests";
 const LOGS_KEY = "pt_quest_logs";

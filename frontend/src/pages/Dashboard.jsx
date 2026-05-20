@@ -4,7 +4,7 @@ import { format, subDays } from "date-fns";
 import { useQuestsManager } from "@/hooks/useQuestsManager";
 import QuestList from "@/components/QuestList";
 import AddQuestDialog from "@/components/AddQuestDialog";
-import ProductivityScore from "@/components/ProductivityScore";
+import DayProgress from "@/components/DayProgress";
 import ThemeToggle from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
 
@@ -45,7 +45,7 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center gap-1">
             <Link
-              to="/analytics"
+              to="/progress"
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-secondary"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -86,7 +86,7 @@ const Dashboard = () => {
 
         {/* Score */}
         <div className="mb-6">
-          <ProductivityScore completed={completed} total={total} />
+          <DayProgress completed={completed} total={total} />
         </div>
 
         {/* Quest List */}
