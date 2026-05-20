@@ -18,7 +18,7 @@ const getGreeting = () => {
 
 const getSubtitle = () => {
   const h = new Date().getHours();
-  if (h >= 22 || h < 5)
+  if (h >= 20 || h < 3)
     return "Legends aren't built in comfort zones. Finish your quests before you rest.";
   return "Complete your quests and level up.";
 };
@@ -36,7 +36,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-[70%] py-12 px-4 mx-auto">
+      <div className="container max-w-[70%] py-10 px-4 mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
