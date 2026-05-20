@@ -27,12 +27,12 @@ const TODAY = format(new Date(), "yyyy-MM-dd");
 const YESTERDAY = format(subDays(new Date(), 1), "yyyy-MM-dd");
 
 const Dashboard = () => {
-  const { activeQuests, addQuest, deleteQuest, renameQuest, toggleQuest, isCompleted } = useQuestsManager();
+  const { quests, addQuest, deleteQuest, renameQuest, toggleQuest, isCompleted } = useQuestsManager();
   const [selectedDate, setSelectedDate] = useState(TODAY);
 
   const isToday = selectedDate === TODAY;
-  const completed = activeQuests.filter((q) => isCompleted(q.id, selectedDate)).length;
-  const total = activeQuests.length;
+  const completed = quests.filter((q) => isCompleted(q.id, selectedDate)).length;
+  const total = quests.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,7 +98,7 @@ const Dashboard = () => {
         </div>
 
         <QuestList
-          quests={activeQuests}
+          quests={quests}
           isCompleted={(id) => isCompleted(id, selectedDate)}
           onToggle={(id) => toggleQuest(id, selectedDate)}
           onDelete={deleteQuest}

@@ -21,23 +21,17 @@ export const useQuestsManager = () => {
   useEffect(() => localStorage.setItem(LOGS_KEY, JSON.stringify(logs)), [logs]);
 
   const addQuest = useCallback((title) => {
-    const archived = quests.find(
-      (q) => q.archivedAt && q.title.toLowerCase() === title.toLowerCase()
-    );
-    if (archived) {
-      setQuests((prev) =>
-        prev.map((q) => (q.id === archived.id ? { ...q, archivedAt: undefined } : q))
-      );
-    } else {
-      const quest = { id: generateId(), title, createdAt: todayStr() };
-      setQuests((prev) => [...prev, quest]);
-    }
-  }, [quests]);
+    const quest = {
+      id: generateId(),
+      title,
+      createdAt: todayStr(),
+    };
+    setQuests((prev) => [...prev, quest]);
+  }, []);
 
   const deleteQuest = useCallback((id) => {
-    setQuests((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, archivedAt: todayStr() } : q))
-    );
+    setQuests((prev) => prev.filter((q) => q.id !== id));
+    setLogs((prev) => prev.filter((l) => l.questId !== id));
   }, []);
 
   const renameQuest = useCallback((id, newTitle) => {
@@ -45,8 +39,6 @@ export const useQuestsManager = () => {
       prev.map((q) => (q.id === id ? { ...q, title: newTitle } : q))
     );
   }, []);
-
-  const activeQuests = quests.filter((q) => !q.archivedAt);
 
   const toggleQuest = useCallback((questId, date) => {
     const d = date || todayStr();
@@ -71,9 +63,9 @@ export const useQuestsManager = () => {
 
   const todayStats = useCallback(() => {
     const today = todayStr();
-    const completed = activeQuests.filter((q) => isCompleted(q.id, today)).length;
-    return { completed, total: activeQuests.length };
-  }, [activeQuests, isCompleted]);
+    const completed = quests.filter((q) => isCompleted(q.id, today)).length;
+    return { completed, total: quests.length };
+  }, [quests, isCompleted]);
 
   const resetAll = useCallback(() => {
     setQuests([]);
@@ -84,7 +76,6 @@ export const useQuestsManager = () => {
 
   return {
     quests,
-    activeQuests,
     logs,
     addQuest,
     deleteQuest,
