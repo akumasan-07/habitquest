@@ -1,15 +1,15 @@
 import { getProductivityScore } from "@/lib/questAnalytics";
 
 const DayProgress = ({ completed, total }) => {
-  const score = getProductivityScore(completed, total);
+  const progress = getProductivityScore(completed, total);
   const circumference = 2 * Math.PI * 40;
-  const offset = circumference - (score / 100) * circumference;
+  const offset = circumference - (progress / 100) * circumference;
 
   return (
     <div className="flex items-center gap-5 p-5 rounded-xl bg-card border border-border">
       <div className="relative h-24 w-24 shrink-0">
         <svg className="h-24 w-24 -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+          <circle cx="50" cy="50" r="40" fill="none" stroke="hsl(var(--border))" strokeWidth="8" />
           <circle
             cx="50"
             cy="50"
@@ -24,7 +24,7 @@ const DayProgress = ({ completed, total }) => {
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xl font-bold font-mono">{score}%</span>
+          <span className="text-xl font-bold font-mono">{progress}%</span>
         </div>
       </div>
       <div>

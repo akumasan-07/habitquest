@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import DeleteQuestConfirmation from "./DeleteQuestConfirmation";
+import { Check, Pencil } from "lucide-react";
 
 const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
   const [editingId, setEditingId] = useState(null);
@@ -49,9 +50,7 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
               aria-label={done ? "Undo quest" : "Complete quest"}
             >
               {done && (
-                <svg className="h-4 w-4 text-primary-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
+                <Check className="h-4 w-4 text-primary-foreground" strokeWidth={3}/>
               )}
             </button>
 
@@ -68,9 +67,8 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
                 className="flex-1 text-sm font-medium bg-transparent border-b border-primary outline-none py-0.5"
               />
             ) : (
-              <span
-                className={cn(
-                  "flex-1 text-sm font-medium transition-all",
+              <span className={cn(
+                  "flex-1 text-sm font-medium transition-all wrap-break-word",
                   done && "line-through text-muted-foreground"
                 )}
               >
@@ -83,10 +81,7 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
               className="text-muted-foreground/40 hover:text-foreground transition-colors p-1"
               aria-label="Rename quest"
             >
-              <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                <path d="m15 5 4 4" />
-              </svg>
+              <Pencil className="h-3.5 w-3.5" />
             </button>
             <DeleteQuestConfirmation 
               onDelete={onDelete}

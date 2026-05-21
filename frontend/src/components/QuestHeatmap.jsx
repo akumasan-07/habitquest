@@ -11,8 +11,9 @@ const getLevel = (count, total) => {
   return "bg-heatmap-max";
 };
 
+const WEEK_WIDTH = 17;
+
 const QuestHeatmap = ({ data }) => {
-  const WEEK_WIDTH = 17;
   const [tooltip, setTooltip] = useState(null);
 
   const weeks = [];
@@ -59,28 +60,28 @@ const QuestHeatmap = ({ data }) => {
         </div>
 
         <div className="flex gap-[5px]">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[4px]">
-            {week.map((day) => (
-              <div
-                key={day.date}
-                className={cn(
-                  "h-3 w-3 rounded-sm cursor-pointer transition-transform hover:scale-125",
-                  getLevel(day.count, day.total)
-                )}
-                onMouseEnter={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  setTooltip({
-                    x: rect.left + rect.width / 2,
-                    y: rect.top - 8,
-                    text: `${format(new Date(day.date), "MMM d, yyyy")}: ${day.count} quests conquered`,
-                  });
-                }}
-                onMouseLeave={() => setTooltip(null)}
-              />
-            ))}
-          </div>
-        ))}
+          {weeks.map((week, wi) => (
+            <div key={wi} className="flex flex-col gap-[4px]">
+              {week.map((day) => (
+                <div
+                  key={day.date}
+                  className={cn(
+                    "h-3 w-3 rounded-sm cursor-pointer transition-transform hover:scale-125",
+                    getLevel(day.count, day.total)
+                  )}
+                  onMouseEnter={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    setTooltip({
+                      x: rect.left + rect.width / 2,
+                      y: rect.top - 8,
+                      text: `${format(new Date(day.date), "MMM d, yyyy")}: ${day.count} quests conquered`,
+                    });
+                  }}
+                  onMouseLeave={() => setTooltip(null)}
+                />
+              ))}
+            </div>
+          ))}
         </div>
       </div>
       {tooltip && (

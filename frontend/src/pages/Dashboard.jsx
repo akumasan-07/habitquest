@@ -7,6 +7,7 @@ import AddQuestDialog from "@/components/AddQuestDialog";
 import DayProgress from "@/components/DayProgress";
 import ThemeToggle from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
+import {FileText} from "lucide-react";
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -48,11 +49,8 @@ const Dashboard = () => {
               to="/progress"
               className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-secondary"
             >
-              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                <polyline points="14 2 14 8 20 8" />
-              </svg>
-              Quest Log
+              <FileText className="h-4 w-4"/>
+              Progress Log
             </Link>
             <ThemeToggle />
           </div>

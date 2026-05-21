@@ -1,3 +1,4 @@
+import { ListPlus } from "lucide-react";
 import { useState } from "react";
 
 const AddQuestDialog = ({ onAdd }) => {
@@ -28,9 +29,7 @@ const AddQuestDialog = ({ onAdd }) => {
         onClick={() => setOpen(true)}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
       >
-        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m14.5 17.5 3-3 3 3" /><path d="m14.5 6.5 3 3 3-3" /><path d="M3 17V7c0-1.1.9-2 2-2h9.5" /><path d="M3 7h9.5" /><path d="M3 12h9.5" />
-        </svg>
+        <ListPlus className="h-4 w-4"/>
         New Quest
       </button>
 
@@ -52,7 +51,7 @@ const AddQuestDialog = ({ onAdd }) => {
                 disabled={!title.trim()}
                 className="px-4 py-2 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
-                Accept
+                Add Quest
               </button>
             </form>
             {error && (
