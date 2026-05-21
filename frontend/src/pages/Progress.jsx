@@ -87,7 +87,12 @@ const Progress = () => {
                 const rate = getCompletionRate(quest.id, logs, quests);
                 return (
                   <div key={quest.id} className="p-4 rounded-lg bg-card border border-border">
-                    <p className="font-medium text-sm mb-2">{quest.title}</p>
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="font-medium text-sm">{quest.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Started: {quest.createdAt}
+                      </p>
+                    </div>
                     <div className="flex gap-4 text-xs">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <svg className="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>

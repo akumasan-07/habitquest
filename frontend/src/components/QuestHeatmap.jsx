@@ -12,6 +12,7 @@ const getLevel = (count, total) => {
 };
 
 const QuestHeatmap = ({ data }) => {
+  const WEEK_WIDTH = 17;
   const [tooltip, setTooltip] = useState(null);
 
   const weeks = [];
@@ -19,11 +20,47 @@ const QuestHeatmap = ({ data }) => {
     weeks.push(data.slice(i, i + 7));
   }
 
+  const monthLabels = [];
+  let lastMonth = null;
+  weeks.forEach((week, index) => {
+    const firstNewMonthDay = week.find((day) => {
+      const currentMonth = format(new Date(day.date), "MMM");
+
+      if (currentMonth !== lastMonth) {
+        lastMonth = currentMonth;
+        return true;
+      }
+      return false;
+    });
+
+    if (firstNewMonthDay) {
+      monthLabels.push({
+        month: format(new Date(firstNewMonthDay.date), "MMM"),
+        index,
+      });
+    }
+  });
+
   return (
     <div className="relative">
-      <div className="flex gap-[3px] overflow-x-auto pb-2">
+      <div className="overflow-x-auto pb-2">
+        <div className="relative h-4 mb-2 text-xs text-muted-foreground">
+          {monthLabels.map((label) => (
+            <span
+              key={label.month + label.index}
+              className="absolute"
+              style={{
+                left: `${label.index * WEEK_WIDTH}px`,
+              }}
+            >
+              {label.month}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex gap-[5px]">
         {weeks.map((week, wi) => (
-          <div key={wi} className="flex flex-col gap-[3px]">
+          <div key={wi} className="flex flex-col gap-[4px]">
             {week.map((day) => (
               <div
                 key={day.date}
@@ -44,6 +81,7 @@ const QuestHeatmap = ({ data }) => {
             ))}
           </div>
         ))}
+        </div>
       </div>
       {tooltip && (
         <div

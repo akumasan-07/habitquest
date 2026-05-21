@@ -83,4 +83,4 @@ export const getHeatmapData = (logs, quests, days = 140) => {
   return data;
 };
 
-export const generateId = () => Math.random().toString(36).substring(2, 10);
+export const generateId = () => crypto.randomUUID();
