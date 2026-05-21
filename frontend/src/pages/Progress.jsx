@@ -13,8 +13,10 @@ const Progress = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-[70%] py-8 px-4 mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="container max-w-5xl py-8 md:py-10 px-10 lg:px-4 mx-auto">
+
+        {/* Header */}
+        <div className="flex flex-wrap items-center gap-3 mb-8">
           <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="m12 19-7-7 7-7" /><path d="M19 12H5" />
@@ -33,6 +35,7 @@ const Progress = () => {
           <ThemeToggle />
         </div>
 
+        {/* Reset Confirmation */}
         {showConfirm && (
           <div className="mb-6 p-4 rounded-lg border border-destructive/50 bg-destructive/5">
             <p className="text-sm font-medium mb-3">Wipe all quest data? This cannot be undone ⚠️</p>
@@ -56,7 +59,7 @@ const Progress = () => {
         {/* Weekly Summary */}
         <section className="mb-8">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">THIS WEEK'S LOG</h2>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
             {weekly.map((d) => (
               <div
                 key={d.date}
@@ -93,7 +96,7 @@ const Progress = () => {
                         Started: {quest.createdAt}
                       </p>
                     </div>
-                    <div className="flex gap-4 text-xs">
+                    <div className="flex flex-wrap gap-3 sm:gap-4 text-xs">
                       <div className="flex items-center gap-1.5 text-muted-foreground">
                         <svg className="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
                         <span>{current} day streak</span>

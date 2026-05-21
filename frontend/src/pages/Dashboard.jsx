@@ -36,12 +36,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container max-w-[70%] py-10 px-4 mx-auto">
+      <div className="container max-w-5xl py-8 md:py-10 px-10 lg:px-4 mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold">{getGreeting()}, Adventurer ⚔️</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{getSubtitle()}</p>
+            <h1 className="text-2xl max-sm:text-xl font-bold">{getGreeting()}, Adventurer ⚔️</h1>
+            <p className="text-sm max-sm:text-xs text-muted-foreground mt-0.5">{getSubtitle()}</p>
           </div>
           <div className="flex items-center gap-1">
             <Link
