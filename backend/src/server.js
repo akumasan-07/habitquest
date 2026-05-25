@@ -3,15 +3,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import questRoutes from "./routes/questRoutes.js"
 
 dotenv.config();
 
 connectDB();
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
+
 
 app.get("/", (req, res) => {
     res.json({
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/quests", questRoutes);
 
 const PORT = process.env.PORT || 5000;
 
