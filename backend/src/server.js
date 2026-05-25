@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
+import authMiddleware from "./middleware/authMiddleware.js";
 
 dotenv.config();
 
@@ -16,6 +17,13 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.json({
         message: "HabitQuest API is running",
+    });
+});
+
+app.get("/api/protected", authMiddleware, (req, res) => {
+    res.json({
+        message: "Protected route accessed",
+        user: req.user,
     });
 });
 
