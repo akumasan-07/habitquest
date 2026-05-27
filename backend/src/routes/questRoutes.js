@@ -6,9 +6,9 @@ const router =  express.Router();
 
 router.use(authMiddleware);
 
+router.get("/completions", getCompletions);
 router.route("/").post(createQuest).get(getQuests);
 router.route("/:id").patch(renameQuest).delete(deleteQuest);
 router.post("/:id/toggle", toggleQuest);
-router.get("/completions", getCompletions);
 
 export default router;
