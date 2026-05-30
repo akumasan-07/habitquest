@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { format, subDays } from "date-fns";
+import {FileText, LogOut} from "lucide-react";
+import { toast } from "sonner";
+
 import { useQuestsManager } from "@/hooks/useQuestsManager";
 import QuestList from "@/components/QuestList";
 import AddQuestDialog from "@/components/AddQuestDialog";
 import DayProgress from "@/components/DayProgress";
 import ThemeToggle from "@/components/ThemeToggle";
 import { cn } from "@/lib/utils";
-import {FileText} from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -35,6 +38,14 @@ const Dashboard = () => {
   const completed = quests.filter((q) => isCompleted(q.id, selectedDate)).length;
   const total = quests.length;
 
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+    toast.success("Logged out successfully");
+    navigate("/login");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container max-w-5xl py-8 md:py-10 px-10 lg:px-4 mx-auto">
@@ -53,6 +64,9 @@ const Dashboard = () => {
               Progress Log
             </Link>
             <ThemeToggle />
+            <button onClick={handleLogout} className="text-muted-foreground hover:text-foreground transition-colors px-2 py-2 rounded-lg hover:bg-secondary hover:cursor-pointer">
+              <LogOut className="h-4 w-4"/>
+            </button>
           </div>
         </div>
 

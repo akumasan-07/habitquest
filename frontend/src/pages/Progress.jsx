@@ -24,7 +24,7 @@ const Progress = () => {
           <h1 className="text-2xl font-bold flex-1">Progress Log 📜</h1>
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
+            className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-destructive transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10 hover:cursor-pointer"
           >
             <RefreshCcw className="h-3.5 w-3.5" />
             Reset
