@@ -25,7 +25,12 @@ const DeleteQuestConfirmation = ({onDelete, questId}) => {
             </p>
             <div className="flex gap-2 mt-4">
                 <button
-                    onClick={() => {onDelete(questId); setOpen(false); }}
+                    onClick={async () => {
+                      const success = await onDelete(questId);
+                      if(success){
+                        setOpen(false); 
+                      } 
+                    }}
                     className="px-4 py-1.5 rounded-md text-sm font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
                 >
                     Delete

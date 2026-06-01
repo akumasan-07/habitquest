@@ -157,6 +157,11 @@ export const deleteQuest = async (req, res) => {
 			});
 		}
 
+		await QuestLog.deleteMany({
+			questId: req.params.id,
+			userId: req.user.userId,
+		});
+
 		res.status(200).json({
 			message: "Quest deleted successfully",
 		});
@@ -222,24 +227,6 @@ export const toggleQuest = async (req, res) => {
 
 		res.status(200).json(log);
 
-	}catch(error){
-		console.error(error);
-		res.status(500).json({
-			message: "Server error",
-		});
-	}
-};
-
-
-export const getCompletions = async (req, res) => {
-	try{
-		const logs = await QuestLog.find({
-			userId: req.user.userId,
-		})
-		.select("questId date completed")
-		.sort({date:-1});
-
-		res.status(200).json(logs);
 	}catch(error){
 		console.error(error);
 		res.status(500).json({

@@ -1,3 +1,5 @@
+import Quest from "../models/Quest.js";
+import QuestLog from "../models/QuestLog.js";
 import buildDailyAnalytics from "../utils/buildDailyAnalytics.js";
 
 export const getHeatmapData = async (req, res) => {
@@ -15,42 +17,115 @@ export const getHeatmapData = async (req, res) => {
 };
 
 
-export const getStreaks = async (req, res) => {
+export const getQuestAnalytics = async (req, res) => {
   try{
-    const days = await buildDailyAnalytics(req.user.userId);
+    const quests = await Quest.find({
+      userId: req.user.userId,
+    }).sort({createdAt: -1});
 
-    let currentStreak = 0;
-    let bestStreak = 0;
-    let runningStreak = 0;
+    const logs = await QuestLog.find({
+      userId: req.user.userId,
+    })
+    .select("questId date completed")
+    .sort({date:1});
 
-    days.forEach((day) => {
-      const perfectDay = (day.total > 0) && (day.completed === day.total);
+    const logsByQuest = new Map();
 
-      if(perfectDay){
-        runningStreak++;
+    logs.forEach((log) => {
+      const questId = log.questId.toString();
+      if(!logsByQuest.has(questId)){
+        logsByQuest.set(questId, []);
+      }
+
+      logsByQuest.get(questId).push(log);
+    });
+
+    const analytics = quests.map((quest) => {
+      const questLogs = logsByQuest.get(quest._id.toString()) || [];
+
+      const createdDate = new Date(quest.createdAt);
+      createdDate.setHours(0,0,0,0);
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      
+      const daysSinceCreation = Math.floor(
+        (today-createdDate) / (1000*60*60*24)
+      )+1;
+
+      const completedDays = questLogs.filter((log) => log.completed).length;
+
+      //--------------- Consistency ------------------
+      const consistency = Math.min(
+        100,
+        Math.round((completedDays/daysSinceCreation)*100)
+      );
+
+      const completedDates = new Set(
+        questLogs
+        .filter((log) => log.completed)
+        .map((log) => {
+          const date = new Date(log.date);
+          date.setHours(0,0,0,0);
+          return date.toISOString().split("T")[0];
+        })
+      );
+
+      //-------------- Current Streak -----------------
+      let currentStreak = 0;
+      const checkDate = new Date();
+      checkDate.setHours(0,0,0,0);
+
+      while(true){
+        const dateStr = checkDate.toISOString().split("T")[0];
+
+        if(!completedDates.has(dateStr)){
+          break;
+        }
+
+        currentStreak++;
+
+        checkDate.setDate(checkDate.getDate()-1);
+      }
+
+      // ------------- Best Streak --------------------
+      const sortedDates = [...completedDates].sort();
+      let bestStreak = 0;
+      let runningStreak = 0;
+      let previousDate = null;
+
+      sortedDates.forEach((dateStr) => {
+        const currentDate = new Date(dateStr);
+        if(!previousDate){
+          runningStreak = 1;
+        }else{
+          const diffDays = (currentDate - previousDate)/(1000*60*60*24);
+          if(diffDays === 1){
+            runningStreak++;
+          }else{
+            runningStreak=1;
+          }
+        }
 
         if(runningStreak > bestStreak){
           bestStreak = runningStreak;
         }
-      }else{
-        runningStreak = 0;
-      }
+
+        previousDate = currentDate;
+      });
+
+      return {
+        questId: quest._id,
+        title: quest.title,
+        createdAt: quest.createdAt,
+        consistency,
+        currentStreak,
+        bestStreak,
+      };
     });
 
-    for(let i = days.length-1; i>=0; i--){
-      const day = days[i];
+    res.status(200).json(analytics);
 
-      const perfectDay = (day.total > 0) && (day.completed === day.total);
-      if(!perfectDay){
-        break;
-      }
-      currentStreak++;
-    }
-
-    res.status(200).json({
-      currentStreak,
-      bestStreak,
-    });
   }catch(error){
     console.error(error);
 
@@ -59,4 +134,3 @@ export const getStreaks = async (req, res) => {
     });
   }
 };
-

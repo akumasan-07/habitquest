@@ -15,16 +15,38 @@ const WEEK_WIDTH = 17;
 
 const QuestHeatmap = ({ data }) => {
   const [tooltip, setTooltip] = useState(null);
+  
+  if(!data || data.length === 0){
+    return null;
+  }
+
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setDate(sixMonthsAgo.getDate() -182);
+
+  const filteredData = data.filter(
+    (day) => new Date(day.date) >= sixMonthsAgo
+  );
+
+  const firstDate = new Date(filteredData[0].date);
+  const dayOfWeek = (firstDate.getDay() + 6) %7;
+
+  const paddedData = [
+    ...Array(dayOfWeek).fill(null),
+    ...filteredData,
+  ];
 
   const weeks = [];
-  for (let i = 0; i < data.length; i += 7) {
-    weeks.push(data.slice(i, i + 7));
+
+  for(let i=0; i<paddedData.length; i+=7){
+    weeks.push(paddedData.slice(i, i+7));
   }
 
   const monthLabels = [];
   let lastMonth = null;
   weeks.forEach((week, index) => {
     const firstNewMonthDay = week.find((day) => {
+      if(!day) return false;
+
       const currentMonth = format(new Date(day.date), "MMM");
 
       if (currentMonth !== lastMonth) {
@@ -42,10 +64,12 @@ const QuestHeatmap = ({ data }) => {
     }
   });
 
+  const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
   return (
     <div className="relative">
       <div className="overflow-x-auto pb-2">
-        <div className="relative h-4 mb-2 text-xs text-muted-foreground">
+        <div className="relative h-4 ml-14 mb-2 text-xs text-muted-foreground">
           {monthLabels.map((label) => (
             <span
               key={label.month + label.index}
@@ -60,26 +84,42 @@ const QuestHeatmap = ({ data }) => {
         </div>
 
         <div className="flex gap-[5px]">
+          <div className="flex flex-col gap-[6px] text-xs text-muted-foreground pr-2 mr-4">
+            {weekdayLabels.map((label) => (
+              <div
+                key={label}
+                className="h-3 flex items-center"
+              >
+                {label}
+              </div>
+            ))}
+          </div>
           {weeks.map((week, wi) => (
-            <div key={wi} className="flex flex-col gap-[4px]">
-              {week.map((day) => (
-                <div
-                  key={day.date}
-                  className={cn(
-                    "h-3 w-3 rounded-sm cursor-pointer transition-transform hover:scale-125",
-                    getLevel(day.count, day.total)
-                  )}
-                  onMouseEnter={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    setTooltip({
-                      x: rect.left + rect.width / 2,
-                      y: rect.top - 8,
-                      text: `${format(new Date(day.date), "MMM d, yyyy")}: ${day.count} quests conquered`,
-                    });
-                  }}
-                  onMouseLeave={() => setTooltip(null)}
-                />
-              ))}
+            <div key={wi} className="flex flex-col gap-[6px]">
+              {week.map((day, di) => {
+                if(!day) {
+                  return <div key={di} className="h-3 w-3" />;
+                }
+                
+                return (
+                  <div
+                    key={day.date}
+                    className={cn(
+                      "h-3 w-3 rounded-sm cursor-pointer transition-transform hover:scale-125",
+                      getLevel(day.completed, day.total)
+                    )}
+                    onMouseEnter={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      setTooltip({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top - 8,
+                        text: `${format(new Date(day.date), "MMM d, yyyy")}: ${day.completed}/${day.total} quests completed`,
+                      });
+                    }}
+                    onMouseLeave={() => setTooltip(null)}
+                  />
+                );
+              })}
             </div>
           ))}
         </div>

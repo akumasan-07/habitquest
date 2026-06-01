@@ -33,7 +33,11 @@ const Register = () => {
       navigate("/login");
 
     }catch(error){
-      setError(error.response?.data?.message || "Registration failed");
+      if(!error.response){
+        setError("Server unavailable. Please try again later.");
+      }else{
+        setError(error.response?.data?.message || "Registration failed");
+      }
 
     }finally{
       setLoading(false);

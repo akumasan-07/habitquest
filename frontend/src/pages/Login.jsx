@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from "@/context/AuthContext";
 import { loginUser } from "@/lib/authApi";
-import { setAuthToken } from '@/lib/api';
 import ThemeToggle from '@/components/ThemeToggle';
 
 const Login = () => {
@@ -23,15 +22,17 @@ const Login = () => {
 
     try{
       const { token } = await loginUser({identifier, password});
-      setAuthToken(token);
-      
       await login(token);
       
       toast.success("Logged in successfully");
       navigate("/");
 
     }catch(error){
-      setError(error.response?.data?.message || "Login failed");
+      if(!error.response){
+        setError("Server unavailable. Please try again later.");
+      }else{
+        setError(error.response?.data?.message || "Login failed");
+      }
 
     }finally{
       setLoading(false);

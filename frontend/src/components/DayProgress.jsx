@@ -1,7 +1,6 @@
-import { getProductivityScore } from "@/lib/questAnalytics";
 
 const DayProgress = ({ completed, total }) => {
-  const progress = getProductivityScore(completed, total);
+  const progress = total === 0 ? 0 : Math.round((completed/total)*100);
   const circumference = 2 * Math.PI * 40;
   const offset = circumference - (progress / 100) * circumference;
 

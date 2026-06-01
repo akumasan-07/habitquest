@@ -6,13 +6,18 @@ const AddQuestDialog = ({ onAdd }) => {
   const [title, setTitle] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (title.trim()) {
-      const added = onAdd(title.trim());
-      if(!added){
+      const result = await onAdd(title.trim());
+      
+      if(result === "duplicate"){
         setError("Quest already exists!");
+        return;
+      }
+
+      if(result === "error"){
         return;
       }
 

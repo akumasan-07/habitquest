@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Check, Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import DeleteQuestConfirmation from "./DeleteQuestConfirmation";
-import { Check, Pencil } from "lucide-react";
 
 const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
   const [editingId, setEditingId] = useState(null);
@@ -12,10 +13,25 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
     setEditValue(quest.title);
   };
 
-  const commitEdit = () => {
-    if (editingId && editValue.trim()) {
-      onRename(editingId, editValue.trim());
+  const commitEdit = async () => {
+    if (!editingId || !editValue.trim()) {
+      setEditingId(null);
+      return;
     }
+
+    const result = await onRename(editingId, editValue.trim());
+
+    if(result === "duplicate"){
+      toast.error("Quest already exists!");
+      setEditingId(null);
+      return;
+    }
+
+    if(result === "error"){
+      setEditingId(null);
+      return;
+    }
+
     setEditingId(null);
   };
 
@@ -36,7 +52,7 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
         return (
           <li
             key={quest.id}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg bg-card border border-border transition-all animate-fade-in"
+            className="flex items-center gap-3 px-4 py-3 rounded-md bg-card border border-border transition-all animate-fade-in"
             style={{ animationDelay: `${i * 40}ms` }}
           >
             <button
@@ -62,7 +78,10 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
                 onBlur={commitEdit}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") commitEdit();
-                  if (e.key === "Escape") setEditingId(null);
+                  if (e.key === "Escape") {
+                    setEditValue("");
+                    setEditingId(null);
+                  }
                 }}
                 className="flex-1 text-sm font-medium bg-transparent border-b border-primary outline-none py-0.5"
               />
