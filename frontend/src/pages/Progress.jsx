@@ -5,6 +5,7 @@ import { startOfWeek, endOfWeek, eachDayOfInterval, format, isToday } from "date
 import QuestHeatmap from "@/components/QuestHeatmap";
 import ThemeToggle from "@/components/ThemeToggle";
 import { getQuestAnalytics, getHeatmapData } from "@/lib/analyticsApi";
+import DeleteAccountConfirmation from "../components/DeleteAccountConfirmation";
 
 const Progress = () => {
   const [questAnalytics, setQuestAnalytics] = useState([]);
@@ -149,6 +150,19 @@ const Progress = () => {
           <div className="p-4 rounded-lg bg-card border border-border">
             <QuestHeatmap data={heatmapData} />
           </div>
+        </section>
+
+        {/* Delete Account */}
+        <section className="mt-12 pt-8 border-t border-border">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+            Delete Account
+          </h2>
+
+          <p className="text-sm text-muted-foreground mb-4">
+            Delete your account and permanently erase all progress.
+          </p>
+
+          <DeleteAccountConfirmation />
         </section>
       </div>
     </div>

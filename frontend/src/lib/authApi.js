@@ -19,3 +19,14 @@ export const getCurrentUser = async () => {
 
   return response.data;
 };
+
+
+export const deleteAccount = async (password) => {
+  const { data } = await api.delete("/auth/account", 
+    {
+      data: {password},
+    }
+  );
+
+  return data;
+};
