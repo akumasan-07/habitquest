@@ -95,6 +95,12 @@ const QuestList = ({ quests, isCompleted, onToggle, onDelete, onRename }) => {
               </span>
             )}
 
+            
+            {quest.currentStreak > 0 && (
+              <span className="text-xs font-medium text-orange-500 shrink-0">
+                🔥 {quest.currentStreak}
+              </span>
+            )}
             <button
               onClick={() => startEditing(quest)}
               className="text-muted-foreground/40 hover:text-foreground transition-colors p-1"

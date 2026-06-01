@@ -1,6 +1,7 @@
 import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
 import buildDailyAnalytics from "../utils/buildDailyAnalytics.js";
+import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
 
 export const getHeatmapData = async (req, res) => {
   try {
@@ -72,21 +73,7 @@ export const getQuestAnalytics = async (req, res) => {
       );
 
       //-------------- Current Streak -----------------
-      let currentStreak = 0;
-      const checkDate = new Date();
-      checkDate.setHours(0,0,0,0);
-
-      while(true){
-        const dateStr = checkDate.toISOString().split("T")[0];
-
-        if(!completedDates.has(dateStr)){
-          break;
-        }
-
-        currentStreak++;
-
-        checkDate.setDate(checkDate.getDate()-1);
-      }
+      const currentStreak = calculateCurrentStreak(completedDates);
 
       // ------------- Best Streak --------------------
       const sortedDates = [...completedDates].sort();

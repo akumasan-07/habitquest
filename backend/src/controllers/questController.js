@@ -1,6 +1,7 @@
 import Quest from "../models/Quest.js";
 import mongoose from "mongoose";
 import QuestLog from "../models/QuestLog.js";
+import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
 
 
 export const createQuest = async (req, res) => {
@@ -63,6 +64,11 @@ export const getQuests = async (req, res) => {
 			date: selectedDate,
 		});
 
+		const completedLogs = await QuestLog.find({
+			userId: req.user.userId,
+			completed: true,
+		}).select("questId date");
+
 		const completedMap = new Map();
 
 		logs.forEach((log) => {
@@ -72,10 +78,31 @@ export const getQuests = async (req, res) => {
 			);
 		});
 
-		const result = quests.map((quest) => ({
-			...quest.toObject(),
-			completed: completedMap.get(quest._id.toString()) || false,
-		}));
+		const completedDatesByQuest = new Map();
+		completedLogs.forEach((log) => {
+			const questId = log.questId.toString();
+			if(!completedDatesByQuest.has(questId)){
+				completedDatesByQuest.set(questId, new Set());
+			}
+
+			const date = new Date(log.date);
+			date.setHours(0,0,0,0);
+
+			completedDatesByQuest
+			.get(questId)
+			.add(date.toISOString().split("T")[0]);
+		});
+
+		const result = quests.map((quest) => {
+			const completedDates = 
+				completedDatesByQuest.get(quest._id.toString()) || new Set();
+
+			return {
+				...quest.toObject(),
+				completed: completedMap.get(quest._id.toString()) || false,
+				currentStreak: calculateCurrentStreak(completedDates),
+			};
+		});
 
 		res.status(200).json(result);
 	} catch(error){

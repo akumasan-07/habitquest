@@ -16,6 +16,7 @@ import {
   renameQuest as renameQuestApi,
   deleteQuest as deleteQuestApi,
   toggleQuest as toggleQuestApi,
+  getQuests as getQuestsApi,
 } from "@/lib/questApi";
 
 const getGreeting = () => {
@@ -130,17 +131,16 @@ const Dashboard = () => {
     try{
       await toggleQuestApi(id, day);
 
-      setQuests((prev) => 
-        prev.map((quest) =>
-          quest.id === id
-            ? {
-              ...quest,
-              completed: !quest.completed,
-              }
-            : quest
-        )
+      const data = await getQuestsApi(day);
+
+      setQuests(
+        data.map((quest) => ({
+          ...quest,
+          id: quest._id,
+        }))
       );
     }catch (error){
+      console.error(error);
       toast.error("Failed to update quest");
     }
   };
