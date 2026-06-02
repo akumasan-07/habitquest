@@ -12,7 +12,10 @@ connectDB();
 
 const app = express();
 app.use(cors({
-    origin: true,
+    origin: [
+        "http://localhost:5173",
+        "https://habitquest-jet.vercel.app",
+    ],
 }));
 app.use(express.json());
 

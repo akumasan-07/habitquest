@@ -2,6 +2,7 @@ import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
 import buildDailyAnalytics from "../utils/buildDailyAnalytics.js";
 import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
+import { startOfISTDay, toISTDateKey } from "../utils/istDay.js";
 
 export const getHeatmapData = async (req, res) => {
   try {
@@ -44,11 +45,11 @@ export const getQuestAnalytics = async (req, res) => {
     const analytics = quests.map((quest) => {
       const questLogs = logsByQuest.get(quest._id.toString()) || [];
 
-      const createdDate = new Date(quest.createdAt);
-      createdDate.setHours(0,0,0,0);
+      const createdDate = new Date(
+        `${toISTDateKey(quest.createdAt)}T00:00:00+05:30`
+      );
 
-      const today = new Date();
-      today.setHours(0,0,0,0);
+      const today = startOfISTDay();
       
       const daysSinceCreation = Math.floor(
         (today-createdDate) / (1000*60*60*24)

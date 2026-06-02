@@ -2,6 +2,10 @@
 
 HabitQuest is a full-stack habit tracking application that helps users build consistency through daily quest management, streak tracking, performance analytics, and long-term progress visualization.
 
+## Live Demo
+
+🔗 https://habitquest-jet.vercel.app
+
 ## Features
 
 ### Habit Tracking System
