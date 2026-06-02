@@ -1,12 +1,19 @@
 import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
+import {
+  toISTDateKey,
+  startOfISTDayFromKey,
+  endOfISTDayFromKey,
+} from "./istDay.js";
+
+const MS_PER_DAY = 86400000;
 
 const buildDailyAnalytics = async (userId) => {
-  const endDate = new Date();
-  endDate.setHours(0,0,0,0);
-
-  const startDate = new Date(endDate);
-  startDate.setDate(startDate.getDate() -364);
+  const endKey = toISTDateKey(new Date());
+  const rangeEnd = endOfISTDayFromKey(endKey);
+  const rangeStart = new Date(
+    startOfISTDayFromKey(endKey).getTime() - 364 * MS_PER_DAY
+  );
 
   const quests = await Quest.find({
     userId,
@@ -16,37 +23,25 @@ const buildDailyAnalytics = async (userId) => {
     userId,
     completed: true,
     date: {
-      $gte: startDate,
-      $lte: endDate,
+      $gte: rangeStart,
+      $lte: rangeEnd,
     },
   }).select("date");
-
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth()+1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-
-    return `${year}-${month}-${day}`;
-  };
 
   const completedMap = new Map();
 
   logs.forEach((log) => {
-    const key = formatDate(log.date);
+    const key = toISTDateKey(log.date);
 
-    completedMap.set(key, (completedMap.get(key) || 0) +1);
+    completedMap.set(key, (completedMap.get(key) || 0) + 1);
   });
 
   const days = [];
+  let dayStart = rangeStart;
 
-  for(let i=0; i<365; i++){
-    const currentDate = new Date(startDate);
-    currentDate.setDate(startDate.getDate() +i);
-
-    const dateKey = formatDate(currentDate);
-
-    const endOfDay = new Date(currentDate);
-    endOfDay.setHours(23, 59, 59, 999);
+  for (let i = 0; i < 365; i++) {
+    const dateKey = toISTDateKey(dayStart);
+    const endOfDay = endOfISTDayFromKey(dateKey);
 
     const total = quests.filter(
       (quest) => quest.createdAt <= endOfDay
@@ -57,6 +52,8 @@ const buildDailyAnalytics = async (userId) => {
       completed: completedMap.get(dateKey) || 0,
       total,
     });
+
+    dayStart = new Date(dayStart.getTime() + MS_PER_DAY);
   }
 
   return days;

@@ -2,6 +2,7 @@ import Quest from "../models/Quest.js";
 import mongoose from "mongoose";
 import QuestLog from "../models/QuestLog.js";
 import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
+import { startOfISTDay } from "../utils/istDay.js";
 
 
 export const createQuest = async (req, res) => {
@@ -48,12 +49,7 @@ export const getQuests = async (req, res) => {
 			});
 		}
 
-		const selectedDate = new Date();
-		selectedDate.setHours(0,0,0,0);
-
-		if(day === "yesterday"){
-			selectedDate.setDate(selectedDate.getDate() -1);
-		}
+		const selectedDate = startOfISTDay(day);
 
 		const quests = await Quest.find({
 			userId: req.user.userId,
@@ -228,12 +224,7 @@ export const toggleQuest = async (req, res) => {
 			});
 		}
 
-		const selectedDate = new Date();
-		selectedDate.setHours(0,0,0,0);
-
-		if(day === "yesterday"){
-			selectedDate.setDate(selectedDate.getDate()-1);
-		}
+		const selectedDate = startOfISTDay(day);
 
 		let log = await QuestLog.findOne({
 			userId: req.user.userId,
