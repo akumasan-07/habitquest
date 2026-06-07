@@ -1,24 +1,20 @@
-const calculateCurrentStreak = (completedDates) => {
+import {
+  toDateKey,
+  startOfDay,
+  startOfDayFromKey,
+  MS_PER_DAY,
+} from "./dateUtils.js";
+
+const calculateCurrentStreak = (completedDates, timeZone) => {
   let currentStreak = 0;
+  const todayStr = toDateKey(new Date(), timeZone);
+  let check = completedDates.has(todayStr)
+    ? startOfDayFromKey(todayStr, timeZone)
+    : new Date(startOfDay("today", timeZone).getTime() - MS_PER_DAY);
 
-  const today = new Date();
-  today.setHours(0,0,0,0);
-
-  const todayStr = today.toISOString().split("T")[0];
-  const checkDate = new Date(today);
-
-  if(!completedDates.has(todayStr)){
-    checkDate.setDate(checkDate.getDate()-1);
-  }
-
-  while(true){
-    const dateStr = checkDate.toISOString().split("T")[0];
-
-    if(!completedDates.has(dateStr)){
-      break;
-    }
+  while (completedDates.has(toDateKey(check, timeZone))) {
     currentStreak++;
-    checkDate.setDate(checkDate.getDate()-1);
+    check = new Date(check.getTime() - MS_PER_DAY);
   }
 
   return currentStreak;

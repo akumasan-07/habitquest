@@ -2,7 +2,7 @@ import Quest from "../models/Quest.js";
 import mongoose from "mongoose";
 import QuestLog from "../models/QuestLog.js";
 import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
-import { startOfISTDay } from "../utils/istDay.js";
+import { startOfDay, toDateKey } from "../utils/dateUtils.js";
 
 
 export const createQuest = async (req, res) => {
@@ -17,7 +17,7 @@ export const createQuest = async (req, res) => {
 		const existingQuest = await Quest.findOne({
 			userId: req.user.userId,
 			title: { $regex: `^${title}$`, $options:"i"},
-		});
+		}).lean();
 
 		if (existingQuest) {
 			return res.status(400).json({
@@ -49,21 +49,28 @@ export const getQuests = async (req, res) => {
 			});
 		}
 
-		const selectedDate = startOfISTDay(day);
+		const timeZone = req.user.timeZone;
+		const selectedDate = startOfDay(day, timeZone);
 
-		const quests = await Quest.find({
-			userId: req.user.userId,
-		}).sort({ createdAt: -1 });
+		const [quests, logs, completedLogs] = await Promise.all([
+			Quest.find({
+				userId: req.user.userId,
+			})
+			.sort({ createdAt: -1 })
+			.lean(),
 
-		const logs = await QuestLog.find({
-			userId: req.user.userId,
-			date: selectedDate,
-		});
+			QuestLog.find({
+				userId: req.user.userId,
+				date: selectedDate,
+			}).lean(),
 
-		const completedLogs = await QuestLog.find({
-			userId: req.user.userId,
-			completed: true,
-		}).select("questId date");
+			QuestLog.find({
+				userId: req.user.userId,
+				completed: true,
+			})
+			.select("questId date")
+			.lean(),
+		]);
 
 		const completedMap = new Map();
 
@@ -81,12 +88,9 @@ export const getQuests = async (req, res) => {
 				completedDatesByQuest.set(questId, new Set());
 			}
 
-			const date = new Date(log.date);
-			date.setHours(0,0,0,0);
-
 			completedDatesByQuest
 			.get(questId)
-			.add(date.toISOString().split("T")[0]);
+			.add(toDateKey(log.date, timeZone));
 		});
 
 		const result = quests.map((quest) => {
@@ -94,9 +98,9 @@ export const getQuests = async (req, res) => {
 				completedDatesByQuest.get(quest._id.toString()) || new Set();
 
 			return {
-				...quest.toObject(),
+				...quest,
 				completed: completedMap.get(quest._id.toString()) || false,
-				currentStreak: calculateCurrentStreak(completedDates),
+				currentStreak: calculateCurrentStreak(completedDates, timeZone),
 			};
 		});
 
@@ -140,7 +144,7 @@ export const renameQuest = async (req, res) => {
 			userId: req.user.userId,
 			title: { $regex: `^${title}$`, $options: "i"},
 			_id: {$ne: quest._id},
-		});
+		}).lean();
 		if(existingQuest){
 			return res.status(400).json({
 				message: "Quest already exists",
@@ -224,7 +228,7 @@ export const toggleQuest = async (req, res) => {
 			});
 		}
 
-		const selectedDate = startOfISTDay(day);
+		const selectedDate = startOfDay(day, req.user.timeZone);
 
 		let log = await QuestLog.findOne({
 			userId: req.user.userId,

@@ -21,7 +21,11 @@ const Login = () => {
     setLoading(true);
 
     try{
-      const { token } = await loginUser({identifier, password});
+      const { token } = await loginUser({
+        identifier,
+        password,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
       await login(token);
       
       toast.success("Logged in successfully");

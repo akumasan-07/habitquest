@@ -39,7 +39,7 @@ const App = () => (
       <Route path="*" element={<NotFound />} />
     </Routes>
 
-    <Toaster position="top-center" richColors />
+    <Toaster position="top-right" richColors expand={false} />
 
   </BrowserRouter>
 );

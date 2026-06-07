@@ -2,11 +2,11 @@ import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
 import buildDailyAnalytics from "../utils/buildDailyAnalytics.js";
 import calculateCurrentStreak from "../utils/calculateCurrentStreak.js";
-import { startOfISTDay, toISTDateKey } from "../utils/istDay.js";
+import { startOfDay, startOfDayFromKey, toDateKey } from "../utils/dateUtils.js";
 
 export const getHeatmapData = async (req, res) => {
   try {
-    const days = await buildDailyAnalytics(req.user.userId);
+    const days = await buildDailyAnalytics(req.user.userId, req.user.timeZone);
     
     res.status(200).json(days);
 
@@ -21,15 +21,22 @@ export const getHeatmapData = async (req, res) => {
 
 export const getQuestAnalytics = async (req, res) => {
   try{
-    const quests = await Quest.find({
-      userId: req.user.userId,
-    }).sort({createdAt: -1});
+    const timeZone = req.user.timeZone;
 
-    const logs = await QuestLog.find({
-      userId: req.user.userId,
-    })
-    .select("questId date completed")
-    .sort({date:1});
+    const [quests, logs] = await Promise.all([
+      Quest.find({
+        userId: req.user.userId,
+      })
+      .sort({createdAt: -1})
+      .lean(),
+
+      QuestLog.find({
+        userId: req.user.userId,
+      })
+      .select("questId date completed")
+      .sort({date:1})
+      .lean(),
+    ]);
 
     const logsByQuest = new Map();
 
@@ -45,11 +52,12 @@ export const getQuestAnalytics = async (req, res) => {
     const analytics = quests.map((quest) => {
       const questLogs = logsByQuest.get(quest._id.toString()) || [];
 
-      const createdDate = new Date(
-        `${toISTDateKey(quest.createdAt)}T00:00:00+05:30`
+      const createdDate = startOfDayFromKey(
+        toDateKey(quest.createdAt, timeZone),
+        timeZone
       );
 
-      const today = startOfISTDay();
+      const today = startOfDay("today", timeZone);
       
       const daysSinceCreation = Math.floor(
         (today-createdDate) / (1000*60*60*24)
@@ -66,15 +74,11 @@ export const getQuestAnalytics = async (req, res) => {
       const completedDates = new Set(
         questLogs
         .filter((log) => log.completed)
-        .map((log) => {
-          const date = new Date(log.date);
-          date.setHours(0,0,0,0);
-          return date.toISOString().split("T")[0];
-        })
+        .map((log) => toDateKey(log.date, timeZone))
       );
 
       //-------------- Current Streak -----------------
-      const currentStreak = calculateCurrentStreak(completedDates);
+      const currentStreak = calculateCurrentStreak(completedDates, timeZone);
 
       // ------------- Best Streak --------------------
       const sortedDates = [...completedDates].sort();

@@ -36,6 +36,11 @@ questLogSchema.index(
   }
 );
 
+questLogSchema.index({
+  userId: 1,
+  completed: 1,
+});
+
 const QuestLog = mongoose.model("QuestLog", questLogSchema);
 
 export default QuestLog;

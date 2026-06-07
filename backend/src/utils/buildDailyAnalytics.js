@@ -1,51 +1,68 @@
 import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
 import {
-  toISTDateKey,
-  startOfISTDayFromKey,
-  endOfISTDayFromKey,
-} from "./istDay.js";
+  toDateKey,
+  startOfDayFromKey,
+  endOfDayFromKey,
+  MS_PER_DAY,
+} from "./dateUtils.js";
 
-const MS_PER_DAY = 86400000;
-
-const buildDailyAnalytics = async (userId) => {
-  const endKey = toISTDateKey(new Date());
-  const rangeEnd = endOfISTDayFromKey(endKey);
+const buildDailyAnalytics = async (userId, timeZone) => {
+  const endKey = toDateKey(new Date(), timeZone);
+  const rangeEnd = endOfDayFromKey(endKey, timeZone);
   const rangeStart = new Date(
-    startOfISTDayFromKey(endKey).getTime() - 364 * MS_PER_DAY
+    startOfDayFromKey(endKey, timeZone).getTime() - 364 * MS_PER_DAY
   );
 
-  const quests = await Quest.find({
-    userId,
-  }).select("createdAt");
+  const [quests, logs] = await Promise.all([
+    Quest.find({
+      userId,
+    })
+    .select("createdAt")
+    .lean(),
 
-  const logs = await QuestLog.find({
-    userId,
-    completed: true,
-    date: {
-      $gte: rangeStart,
-      $lte: rangeEnd,
-    },
-  }).select("date");
+    QuestLog.find({
+      userId,
+      completed: true,
+      date: {
+        $gte: rangeStart,
+        $lte: rangeEnd,
+      },
+    })
+    .select("date")
+    .lean(),
+  ]);
 
   const completedMap = new Map();
 
   logs.forEach((log) => {
-    const key = toISTDateKey(log.date);
-
+    const key = toDateKey(log.date, timeZone);
     completedMap.set(key, (completedMap.get(key) || 0) + 1);
   });
 
   const days = [];
   let dayStart = rangeStart;
 
-  for (let i = 0; i < 365; i++) {
-    const dateKey = toISTDateKey(dayStart);
-    const endOfDay = endOfISTDayFromKey(dateKey);
+  const questCreationDates = quests
+    .map((q) => q.createdAt)
+    .sort((a, b) => a-b);
+  
+  let activeQuestCount = 0;
+  let questIndex = 0;
 
-    const total = quests.filter(
-      (quest) => quest.createdAt <= endOfDay
-    ).length;
+  for (let i = 0; i < 365; i++) {
+    const dateKey = toDateKey(dayStart, timeZone);
+    const endOfDay = endOfDayFromKey(dateKey, timeZone);
+
+    while(
+      questIndex < questCreationDates.length &&
+      questCreationDates[questIndex] <= endOfDay
+    ){
+      activeQuestCount++;
+      questIndex++;
+    }
+
+    const total = activeQuestCount;
 
     days.push({
       date: dateKey,

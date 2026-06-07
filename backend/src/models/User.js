@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
             required: true,
             minLength: 8,
         },
+
+        timeZone: {
+            type: String,
+            default: "Asia/Kolkata",
+        },
     },
 
     {

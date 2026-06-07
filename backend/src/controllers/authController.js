@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import Quest from "../models/Quest.js";
 import QuestLog from "../models/QuestLog.js";
+import { isValidTimeZone } from "../utils/dateUtils.js";
 
 export const register = async (req, res) => {
     try{
@@ -48,7 +49,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try{
-        const {identifier, password} = req.body;
+        const {identifier, password, timeZone} = req.body;
 
         if(!identifier || !password){
             return res.status(400).json({
@@ -76,8 +77,13 @@ export const login = async (req, res) => {
 
         if(!isMatch) {
             return res.status(401).json({
-                message: "Invalid credentials",
+                message: "Incorrect Password",
             });
+        }
+
+        if(timeZone && isValidTimeZone(timeZone) && user.timeZone !== timeZone) {
+            user.timeZone = timeZone;
+            await user.save();
         }
 
         const token = jwt.sign(
