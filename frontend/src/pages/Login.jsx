@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { loginUser } from "@/lib/authApi";
 import ThemeToggle from '@/components/ThemeToggle';
@@ -29,7 +30,7 @@ const Login = () => {
       await login(token);
       
       toast.success("Logged in successfully");
-      navigate("/");
+      navigate("/dashboard");
 
     }catch(error){
       if(!error.response){
@@ -46,10 +47,18 @@ const Login = () => {
   return (
     <div className='min-h-screen flex items-center justify-center px-4'>
       <div className='w-full max-w-sm bg-card border border-border rounded-xl p-6'>
-        <div className='flex justify-between mb-6'>
-          <h1 className='text-2xl font-bold'>
-            Login
-          </h1>
+        <div className='flex justify-between items-center mb-6'>
+
+          <div className='flex items-center gap-1'>
+            <Link to="/" className='p-1 rounded-md hover:bg-secondary transition translate-y-0.5 text-primary' aria-label='Back to Home'>
+              <ArrowLeft className='h-5 w-5' />
+            </Link>
+
+            <h1 className='text-2xl font-bold'>
+              Login
+            </h1>
+          </div>
+
           <ThemeToggle />
         </div>
         

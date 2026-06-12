@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import questRoutes from "./routes/questRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
+import healthRoutes from "./routes/healthRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
     });
 });
 
+app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/quests", questRoutes);
 app.use("/api/analytics", analyticsRoutes);

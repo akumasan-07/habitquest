@@ -26,7 +26,7 @@ const DeleteAccountConfirmation = () => {
       toast.success("Account deleted successfully!");
 
       logout();
-      navigate("/login");
+      navigate("/");
 
     }catch(error){
       if(!error.response){

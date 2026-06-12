@@ -8,11 +8,15 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 import GuestRoute from "./components/GuestRoute";
+import LandingPage from "./pages/LandingPage";
 
 const App = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={
+
+      <Route path="/" element={<LandingPage />} />
+
+      <Route path="/dashboard" element={
         <ProtectedRoute>
           <Dashboard />
         </ProtectedRoute>

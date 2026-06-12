@@ -57,7 +57,7 @@ const Dashboard = () => {
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
-    navigate("/login");
+    navigate("/");
   };
 
   const handleAddQuest = async (title) => {

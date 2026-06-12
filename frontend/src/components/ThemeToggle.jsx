@@ -19,7 +19,7 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setDark((d) => !d)}
-      className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary hover:cursor-pointer transition-colors"
+      className="p-1 sm:p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary hover:cursor-pointer transition-colors"
       aria-label="Toggle theme"
     >
       {dark ? (
